@@ -23,28 +23,40 @@ namespace CoreDemo
 
         public IConfiguration Configuration { get; set; }
 
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton(provider => Configuration);
             services.AddSingleton<IGreeter, Greeter>();  //dependency injection
+            services.AddMvc();
         }
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(
-            IApplicationBuilder app, 
+            IApplicationBuilder app,             
             IGreeter greeter,
             IHostingEnvironment env, 
             ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole();
-
+            loggerFactory.AddConsole();            
+            
             if (env.IsDevelopment())
             {
                 //middleware 1
                 app.UseDeveloperExceptionPage();
             }
+
+            //must come after static files
+            //app.UseDefaultFiles();
+            //app.UseStaticFiles();
+
+            //combine usedefault files and use static files
+            app.UseFileServer();
+
+            app.UseMvcWithDefaultRoute();
 
             //app.UseWelcomePage();            
 
